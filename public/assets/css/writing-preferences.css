@@ -1,0 +1,77 @@
+:root { --text-muted: #68717d; }
+:root[data-theme="sepia"] {
+    --bg: #fbf5e9; --surface: #fbf5e9; --sidebar: #f2eadb; --surface-soft: #eee3d0; --surface-hover: #e6d9c2;
+    --border: #ded2bc; --border-strong: #c8b999; --text: #42382c; --text-soft: #6d5c47; --text-muted: #756550;
+    --accent: #574531; --accent-hover: #403120;
+}
+:root[data-theme="dark"] {
+    --bg: #1e2228; --surface: #1e2228; --sidebar: #191d23; --surface-soft: #292f38; --surface-hover: #343d49;
+    --border: #39414c; --border-strong: #535f70; --text: #e4e7ec; --text-soft: #bdc6d2; --text-muted: #a5b0c0;
+    --accent: #465b77; --accent-hover: #536c8f; --success: #91d5a6; --warning: #ebc675; --danger: #ffa399;
+}
+.workspace { grid-template-rows: auto minmax(0, 1fr) auto; height: 100dvh; }
+.app-shell, .sidebar { height: 100dvh; }
+.topbar { height: auto; flex-wrap: wrap; }
+.note-title { min-width: 160px; }
+.writing-tools { display: flex; align-items: center; gap: 6px; margin-left: auto; }
+.writing-button { min-height: 34px; padding: 6px 12px; border: 1px solid var(--border); border-radius: 7px; background: var(--surface); color: var(--text-soft); font-size: 12px; cursor: pointer; white-space: nowrap; }
+.writing-button:hover, .writing-button[aria-pressed="true"] { background: var(--surface-soft); color: var(--text); border-color: var(--border-strong); }
+button:focus-visible, select:focus-visible, input:focus-visible { outline: 2px solid var(--text-soft); outline-offset: 3px; }
+.note-item-title { font-size: 14px !important; }
+.note-item-meta, .save-state, .statusbar { font-size: 11px !important; }
+.folder-item, .nav-item { font-size: 13px !important; }
+.statusbar { min-height: 32px !important; }
+.folder-select, .note-action-button, .save-button { font-size: 12px !important; }
+.folder-select { background: var(--surface); color: var(--text); }
+/* Use the same palette for the local TinyMCE chrome, menus and dialogs. */
+.tox .tox-editor-header, .tox .tox-menubar, .tox .tox-toolbar, .tox .tox-toolbar__primary,
+.tox .tox-toolbar__overflow, .tox .tox-toolbar-overlord,
+.tox .tox-statusbar, .tox .tox-menu, .tox .tox-dialog, .tox .tox-dialog__header,
+.tox .tox-dialog__body, .tox .tox-dialog__footer, .tox .tox-collection--list { background: var(--surface) !important; color: var(--text) !important; border-color: var(--border) !important; }
+.tox .tox-editor-header { box-shadow: none !important; border-bottom: 1px solid var(--border) !important; }
+.tox .tox-mbtn, .tox .tox-tbtn { background: var(--surface) !important; }
+.tox .tox-mbtn, .tox .tox-tbtn, .tox .tox-collection__item, .tox .tox-label, .tox .tox-dialog__title,
+.tox .tox-statusbar a, .tox .tox-statusbar__path-item { color: var(--text-soft) !important; }
+.tox .tox-tbtn svg, .tox .tox-collection__item-icon svg { fill: currentColor !important; }
+.tox .tox-tbtn:hover, .tox .tox-mbtn:hover, .tox .tox-tbtn--enabled,
+.tox .tox-collection__item--active, .tox .tox-collection__item--enabled { background: var(--surface-hover) !important; color: var(--text) !important; }
+.tox .tox-textfield, .tox .tox-textarea, .tox .tox-listboxfield .tox-listbox--select { background: var(--surface-soft) !important; color: var(--text) !important; border-color: var(--border) !important; }
+.tox .tox-statusbar__wordcount { display: none; }
+/* Focus is independent of the saved sidebar state. */
+.app-shell.writing-focus { grid-template-columns: 0 minmax(0, 1fr) !important; }
+.app-shell.writing-focus .sidebar { display: none !important; }
+.app-shell.writing-focus .workspace { width: 100vw !important; }
+.app-shell.writing-focus .tox .tox-editor-header,
+.app-shell.writing-focus .tox .tox-statusbar,
+.writing-focus .show-sidebar-button, .writing-focus .note-status-badge,
+.writing-focus .folder-select-wrap, .writing-focus .note-actions, .writing-focus .save-button { display: none !important; }
+.writing-focus .topbar { border-bottom-color: transparent; }
+.appearance-dialog { width: min(440px, calc(100vw - 32px)); max-height: calc(100dvh - 40px); overflow: auto; padding: 22px; border: 1px solid var(--border); border-radius: 14px; background: var(--surface); color: var(--text); box-shadow: 0 24px 90px #0004; }
+.appearance-dialog::backdrop { background: #1118; }
+.appearance-heading { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+.appearance-heading h2 { margin: 0; font-size: 21px; }
+.appearance-intro { color: var(--text-soft); line-height: 1.6; margin: 10px 0 16px; }
+.appearance-fields { display: grid; gap: 12px; }
+.appearance-field { display: grid; gap: 7px; font-size: 13px; font-weight: 600; }
+.appearance-field select { width: 100%; min-height: 40px; padding: 8px 10px; border: 1px solid var(--border-strong); border-radius: 7px; background: var(--surface); color: var(--text); font: inherit; font-weight: 400; }
+.appearance-feedback { min-height: 2.8em; margin: 16px 0 10px; font-size: 12px; color: var(--text-soft); line-height: 1.5; }
+@media (max-width: 1000px) { .note-title { flex-basis: 45%; } .folder-select-label { display: none; } }
+@media (max-width: 760px) {
+    .app-shell { grid-template-columns: minmax(0, 1fr) !important; }
+    .sidebar { position: fixed; top: 0; left: 0; z-index: 20; width: 260px !important; min-width: 260px !important; box-shadow: 8px 0 30px #0003; }
+    .app-shell.sidebar-collapsed { grid-template-columns: 0 minmax(0, 1fr) !important; }
+    .note-title { flex: 1 1 55%; min-width: 100px; }
+    .note-status-badge { display: none; }
+    .topbar { padding: 8px 10px !important; }
+    .writing-button { padding: 6px 10px; }
+    .status-left { max-width: 40%; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+}
+
+.note-action-button.danger-soft { color: var(--danger); }
+/* Retain readable actions and save feedback at narrow widths. */
+.save-state { display: block; }
+.note-action-button[hidden] { display: none !important; }
+@media (max-width: 980px) {
+    .note-action-button { width: auto; }
+    #archiveAction::after, #trashAction::after, #restoreAction::after, #forceDeleteAction::after { content: none; }
+}

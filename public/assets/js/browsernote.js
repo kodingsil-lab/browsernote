@@ -1606,6 +1606,7 @@
             setup(editor) {
                 editor.on('init', () => {
                     state.editor = editor;
+                    window.BrowserNoteAppearance?.attach(editor);
                     fitEditorToHost();
                     updateCounters();
                 });

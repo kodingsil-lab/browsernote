@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="<?= base_url('assets/css/app.css') ?>">
 <link rel="stylesheet" href="<?= base_url('assets/css/ui-polish-fix.css') ?>">
 <link rel="stylesheet" href="<?= base_url('assets/css/ui-layout-scale-fix.css') ?>">
+<link rel="stylesheet" href="<?= base_url('assets/css/writing-preferences.css?v=5') ?>">
 </head>
 <body>
 <div class="app-shell" id="appShell">
@@ -155,6 +156,11 @@
                 <button class="note-action-button danger" id="forceDeleteAction" type="button" hidden>Hapus Permanen</button>
             </div>
 
+            <div class="writing-tools" aria-label="Pengaturan menulis">
+                <button class="writing-button" id="focusModeButton" type="button" aria-pressed="false" title="Mode fokus">Fokus</button>
+                <button class="writing-button" id="appearanceButton" type="button" aria-haspopup="dialog" aria-controls="appearanceDialog">Tampilan</button>
+            </div>
+
             <div class="save-state" id="saveState" data-state="ready">
                 Siap
             </div>
@@ -177,8 +183,6 @@
                 <span id="wordCount">0 kata</span>
                 <span class="status-separator">•</span>
                 <span id="charCount">0 karakter</span>
-                <span class="status-separator">•</span>
-                <span>TinyMCE lokal</span>
             </div>
         </footer>
     </main>
@@ -189,6 +193,32 @@
     <button type="button" id="deleteFolderAction" class="danger">Hapus folder</button>
 </div>
 
+<dialog class="appearance-dialog" id="appearanceDialog" aria-labelledby="appearanceHeading" aria-describedby="appearanceIntro">
+    <div class="appearance-heading">
+        <h2 id="appearanceHeading">Ruang menulis</h2>
+        <button class="writing-button" id="closeAppearance" type="button" autofocus>Tutup</button>
+    </div>
+    <p class="appearance-intro" id="appearanceIntro">Atur ruang yang nyaman untuk tulisanmu. Perubahan langsung terlihat.</p>
+    <div class="appearance-fields">
+        <label class="appearance-field" for="appearance-theme">Tema
+            <select id="appearance-theme"><option value="light">Terang</option><option value="sepia">Sepia</option><option value="dark">Gelap</option></select>
+        </label>
+        <label class="appearance-field" for="appearance-width">Lebar tulisan
+            <select id="appearance-width"><option value="writing">Mode Menulis — terpusat</option><option value="wide">Lebar penuh — kode dan tabel</option></select>
+        </label>
+        <label class="appearance-field" for="appearance-font">Jenis huruf
+            <select id="appearance-font"><option value="sans">Sans-serif — Segoe UI</option><option value="serif">Serif — Georgia</option></select>
+        </label>
+        <label class="appearance-field" for="appearance-size">Ukuran teks
+            <select id="appearance-size"><option value="16">16 px</option><option value="18">18 px</option><option value="20">20 px</option><option value="22">22 px</option></select>
+        </label>
+        <label class="appearance-field" for="appearance-spacing">Jarak baris
+            <select id="appearance-spacing"><option value="1.5">Rapat — 1,5</option><option value="1.7">Nyaman — 1,7</option><option value="2">Lega — 2</option></select>
+        </label>
+    </div>
+    <p class="appearance-feedback" id="appearanceFeedback" role="status">Pilihan berlaku untuk tampilan di browser ini. Format khusus di dalam catatan tetap mengikuti tulisanmu.</p>
+    <button class="writing-button" id="resetAppearance" type="button">Kembalikan tampilan awal</button>
+</dialog>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
 <script>
@@ -199,11 +229,12 @@ window.BrowserNoteConfig = {
 </script>
 
 <script src="<?= base_url('assets/vendor/tinymce/tinymce.min.js') ?>"></script>
-<script src="<?= base_url('assets/js/browsernote.js') ?>"></script>
+<script src="<?= base_url('assets/js/writing-preferences.js?v=1') ?>"></script>
+<script src="<?= base_url('assets/js/browsernote.js?v=writing1') ?>"></script>
 <script src="<?= base_url('assets/js/search.js') ?>"></script>
 <script src="<?= base_url('assets/js/shortcuts.js') ?>"></script>
 <script src="<?= base_url('assets/js/export.js') ?>"></script>
-<script src="<?= base_url('assets/js/polish.js') ?>"></script>
-<script src="<?= base_url('assets/js/editor-polish-fix.js') ?>"></script>
+<script src="<?= base_url('assets/js/polish.js?v=writing1') ?>"></script>
+<script src="<?= base_url('assets/js/editor-polish-fix.js?v=writing1') ?>"></script>
 </body>
 </html>

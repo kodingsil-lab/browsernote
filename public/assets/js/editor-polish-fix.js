@@ -176,7 +176,7 @@
         const editor =
             window.tinymce?.get('noteEditor');
 
-        if (editor) {
+        if (editor?.initialized) {
             attach(editor);
             window.clearInterval(timer);
             return;
@@ -192,7 +192,7 @@
             const editor =
                 window.tinymce?.get('noteEditor');
 
-            if (editor) {
+            if (editor?.initialized) {
                 installStyle(editor);
                 normalizeEmptyEditor(editor);
             }

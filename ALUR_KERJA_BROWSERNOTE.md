@@ -598,3 +598,25 @@ browsernote/
 - Arsip adalah status catatan selesai/tidak aktif.
 - Sampah adalah penghapusan sementara.
 - UI memanfaatkan seluruh area browser.
+
+## Stage 15 — Kenyamanan Menulis (8 September 2026)
+
+Implementasi:
+- Tombol **Tampilan** membuka dialog pengaturan ruang menulis.
+- Mode Menulis terpusat: area teks 760 px pada desktop (820 px termasuk padding), responsif pada layar kecil. Lebar penuh tetap tersedia untuk kode dan tabel.
+- Tema terang, sepia, dan gelap; font Segoe UI atau Georgia; ukuran 16/18/20/22 px; jarak baris 1,5/1,7/2.
+- Preferensi tersimpan di `browsernote.appearance.v1` pada localStorage dan diterapkan kembali setelah reload. Tombol reset mengembalikan tema terang, sans-serif 18 px, jarak 1,7, dan lebar terpusat.
+- Tombol **Fokus** menyembunyikan sidebar, toolbar, serta aksi pengelolaan catatan. **Keluar Fokus** atau **Esc** di editor mengembalikan tampilan sebelumnya. Status simpan tetap terlihat. Mode Fokus berlaku selama sesi halaman; kondisi sidebar sebelumnya tetap dipertahankan.
+- Preferensi diterapkan pada dokumen editor, bukan pada HTML isi catatan; tidak mengubah format tersimpan atau hasil ekspor. Format eksplisit pada teks tetap berlaku.
+- Jumlah kata ditampilkan sekali di statusbar aplikasi; label antarmuka diperbesar dan label teknis editor dihapus.
+- Pada layar <=760 px, sidebar awalnya ditutup dan dapat dibuka sebagai panel. Tombol aksi tetap memiliki label yang terbaca.
+- Skrip polish lama menunggu editor selesai inisialisasi sebelum mengakses seleksi.
+
+Berkas utama: `writing-preferences.js`, `writing-preferences.css`, `writing-content.css`, serta integrasi di view dan inisialisasi TinyMCE.
+
+Git lokal:
+- Commit awal sebelum perubahan: `6b51b6d`.
+- `.env`, database SQLite, backup, dan laporan runtime tidak masuk Git.
+- TinyMCE self-hosted masuk Git; dependensi Composer `/vendor/` diabaikan.
+
+Validasi: syntax check JavaScript/PHP, pemeriksaan browser pada desktop dan viewport 390 x 844, autosave dan reload catatan uji, persistensi preferensi, tema dan tipografi, lebar penuh, reset, serta keluar fokus melalui Escape.
