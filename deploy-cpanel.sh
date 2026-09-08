@@ -13,13 +13,26 @@ AUTH_USER="${AUTH_USER:-penulis}"
 APP_URL='https://note.sil.web.id/'
 LOCK_HELD=0
 MAINTENANCE=0
+COMPOSER_INSTALLER=''
 STAMP="$(date +%Y%m%d-%H%M%S)-$$"
 
 log() { printf '\n[BrowserNote] %s\n' "$*"; }
 fail() { printf '\n[BrowserNote] ERROR: %s\n' "$*" >&2; exit 1; }
 need() { command -v "$1" >/dev/null 2>&1 || fail "Command tidak tersedia: $1"; }
+download_file() {
+    local url="$1"
+    local destination="$2"
+    if command -v curl >/dev/null 2>&1; then
+        curl --fail --silent --show-error --location --proto '=https' --tlsv1.2 --output "$destination" "$url"
+    elif command -v wget >/dev/null 2>&1; then
+        wget --quiet --https-only --output-document="$destination" "$url"
+    else
+        "$PHP_BIN" -r '$url=$argv[1]; $destination=$argv[2]; if (!copy($url, $destination)) { exit(1); }' "$url" "$destination"
+    fi
+}
 cleanup() {
     local code=$?
+    if [[ -n "$COMPOSER_INSTALLER" && -f "$COMPOSER_INSTALLER" ]]; then rm -f -- "$COMPOSER_INSTALLER"; fi
     if (( LOCK_HELD )); then rmdir -- "$APP_DIR/.deploy-lock" || true; fi
     if (( code != 0 && MAINTENANCE )); then
         printf '\nDeploy gagal; situs tetap maintenance. Backup: %s/%s\nPerbaiki penyebabnya lalu jalankan update kembali.\n' "$BACKUP_DIR" "$STAMP" >&2
@@ -68,8 +81,15 @@ if [[ -z "$COMPOSER_BIN" ]]; then
         done
     fi
 fi
-[[ -f "$COMPOSER_BIN" ]] || fail 'Composer belum ditemukan. Isi COMPOSER_BIN=/path/ke/composer atau composer.phar.'
-"$PHP_BIN" "$COMPOSER_BIN" --version
+if [[ -n "$COMPOSER_BIN" ]]; then
+    [[ -f "$COMPOSER_BIN" ]] || fail "Composer tidak ditemukan pada COMPOSER_BIN: $COMPOSER_BIN"
+    "$PHP_BIN" "$COMPOSER_BIN" --version
+elif [[ "$ACTION" == check ]]; then
+    if ! command -v curl >/dev/null 2>&1 && ! command -v wget >/dev/null 2>&1; then
+        "$PHP_BIN" -r 'exit((bool) ini_get("allow_url_fopen") ? 0 : 1);' || fail 'Composer tidak ada dan hosting tidak menyediakan curl/wget/allow_url_fopen untuk mengunduhnya.'
+    fi
+    log 'Composer global tidak ditemukan; saat install script akan mengunduh Composer resmi dan memverifikasi checksum.'
+fi
 
 if [[ -f "$APP_DIR/.browsernote-app" ]]; then
     [[ "$(cat "$APP_DIR/.browsernote-app")" == "$WEB_DIR" ]] || fail 'App ini sudah terhubung ke webroot lain.'
@@ -111,6 +131,27 @@ for directory in cache logs session uploads debugbar backups; do
     mkdir -p -- "$SHARED/writable/$directory"
     chmod 700 "$SHARED/writable/$directory"
 done
+
+if [[ -z "$COMPOSER_BIN" ]]; then
+    TOOLS_DIR="$SHARED/tools"
+    mkdir -p -- "$TOOLS_DIR"
+    chmod 700 "$TOOLS_DIR"
+    COMPOSER_BIN="$TOOLS_DIR/composer.phar"
+    if [[ ! -s "$COMPOSER_BIN" ]]; then
+        log 'Mengunduh Composer resmi ke shared/tools.'
+        COMPOSER_INSTALLER="$TOOLS_DIR/composer-setup-$STAMP.php"
+        COMPOSER_SIGNATURE="$TOOLS_DIR/composer-setup-$STAMP.sig"
+        download_file 'https://composer.github.io/installer.sig' "$COMPOSER_SIGNATURE"
+        download_file 'https://getcomposer.org/installer' "$COMPOSER_INSTALLER"
+        "$PHP_BIN" -r '$expected=trim((string) file_get_contents($argv[1])); $actual=hash_file("sha384", $argv[2]); if ($expected === "" || !hash_equals($expected, $actual)) { fwrite(STDERR, "Checksum installer Composer tidak cocok.\n"); exit(1); }' "$COMPOSER_SIGNATURE" "$COMPOSER_INSTALLER"
+        "$PHP_BIN" "$COMPOSER_INSTALLER" --quiet --2 --install-dir="$TOOLS_DIR" --filename='composer.phar'
+        rm -- "$COMPOSER_INSTALLER" "$COMPOSER_SIGNATURE"
+        COMPOSER_INSTALLER=''
+        chmod 600 "$COMPOSER_BIN"
+    fi
+    [[ -s "$COMPOSER_BIN" ]] || fail 'Composer lokal gagal dibuat.'
+fi
+"$PHP_BIN" "$COMPOSER_BIN" --version
 
 if [[ ! -s "$SHARED/.htpasswd" ]]; then
     [[ -t 0 ]] || fail 'Install pertama membutuhkan terminal interaktif (gunakan ssh -t) untuk password.'

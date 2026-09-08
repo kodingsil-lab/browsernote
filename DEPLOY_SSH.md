@@ -16,7 +16,7 @@ Script ini mengikuti pemisahan aplikasi dan webroot pada `plpi-public/deploy-cpa
 
 Di cPanel, buat domain/subdomain `note.sil.web.id`, aktifkan sertifikat SSL, dan arahkan document root ke folder webroot di atas. Gunakan folder khusus domain, bukan document root situs lain. Bila hosting menetapkan path berbeda, isi `WEB_DIR` dengan path sebenarnya pada setiap perintah. App, source, dan backup harus berada di luar webroot; app dan backup juga ditolak bila berada di `public_html`.
 
-PHP **8.2 atau lebih baru**, ekstensi **intl, mbstring, sqlite3, fileinfo, openssl**, serta Bash, tar, realpath, Composer, dan htpasswd harus tersedia. `rsync` dipakai bila tersedia; jika tidak, script otomatis memakai fallback tar/copy. Versi PHP di MultiPHP Manager harus sesuai dengan PHP CLI yang dipakai script. Script ditujukan untuk Apache 2.4 atau hosting yang mendukung directive `.htaccess` Apache termasuk Basic Auth dan `<If>`, dengan HTTPS langsung pada webserver. Konfigurasi reverse proxy/TLS termination perlu disesuaikan oleh hosting.
+PHP **8.2 atau lebih baru**, ekstensi **intl, mbstring, sqlite3, fileinfo, openssl**, serta Bash, tar, realpath, dan htpasswd harus tersedia. `rsync` dipakai bila tersedia; jika tidak, script otomatis memakai fallback tar/copy. Versi PHP di MultiPHP Manager harus sesuai dengan PHP CLI yang dipakai script. Script ditujukan untuk Apache 2.4 atau hosting yang mendukung directive `.htaccess` Apache termasuk Basic Auth dan `<If>`, dengan HTTPS langsung pada webserver. Konfigurasi reverse proxy/TLS termination perlu disesuaikan oleh hosting.
 
 ## 1. Buat paket di Windows
 
@@ -86,7 +86,7 @@ WEB_DIR="$HOME/note.sil.web.id" \
 bash deploy-cpanel.sh install
 ```
 
-Path PHP/Composer contoh tersebut harus benar-benar tersedia di hosting. `COMPOSER_BIN` harus berupa file entry point PHP Composer atau `composer.phar`, bukan command beserta argumennya. Script tidak mengunduh executable Composer secara otomatis.
+Path PHP/Composer contoh tersebut harus benar-benar tersedia di hosting. `COMPOSER_BIN` harus berupa file entry point PHP Composer atau `composer.phar`, bukan command beserta argumennya. Jika Composer tidak tersedia, saat `install` script mengunduh installer resmi ke folder privat `shared/tools`, memverifikasi checksum SHA-384 dari layanan resmi Composer, lalu memasang Composer 2 lokal. Action `check` hanya memastikan metode unduhan tersedia dan tidak mengunduh file.
 
 Webroot pertama kali harus kosong, kecuali `.well-known`. Jika ada `index.html` bawaan hosting, pindahkan dahulu ke folder backup di luar webroot. Script menolak menimpa situs yang belum ditandai sebagai deployment BrowserNote.
 
