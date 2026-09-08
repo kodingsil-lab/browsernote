@@ -412,10 +412,13 @@ ${note.content || ''}
         } catch (error) {
             console.error(error);
 
-            window.alert(
-                error?.message
-                || 'Export catatan gagal.'
-            );
+            await window.BrowserNoteDialog.alert({
+                title: 'Export gagal',
+                message: error?.message
+                    || 'Export catatan gagal.',
+                confirmText: 'Tutup',
+                variant: 'danger',
+            });
         }
     }
 

@@ -15,6 +15,8 @@
 <link rel="stylesheet" href="<?= base_url('assets/css/ui-layout-scale-fix.css') ?>">
 <link rel="stylesheet" href="<?= base_url('assets/css/writing-preferences.css?v=5') ?>">
 <link rel="stylesheet" href="<?= base_url('assets/css/tooltips.css?v=1') ?>">
+<link rel="stylesheet" href="<?= base_url('assets/css/sidebar-scalability.css?v=1') ?>">
+<link rel="stylesheet" href="<?= base_url('assets/css/dialogs.css?v=1') ?>">
 </head>
 <body>
 <div class="app-shell" id="appShell">
@@ -77,7 +79,18 @@
 
         <section class="sidebar-section folders-section" id="foldersSection">
             <div class="section-heading">
-                <span>FOLDER</span>
+                <button
+                    class="folder-section-toggle"
+                    id="folderSectionToggle"
+                    type="button"
+                    aria-expanded="true"
+                    aria-controls="folderList"
+                    data-tooltip="Sembunyikan daftar folder"
+                    data-tooltip-side="right"
+                >
+                    <span>FOLDER</span>
+                    <span class="folder-toggle-icon" id="folderToggleIcon" aria-hidden="true">⌄</span>
+                </button>
 
                 <button
                     class="section-add-button"
@@ -90,6 +103,7 @@
             </div>
 
             <div class="folder-list" id="folderList">
+                <div class="folder-pinned">
                 <button
                     class="folder-item active"
                     id="allNotesFolder"
@@ -109,6 +123,7 @@
                     <span class="folder-name">Tanpa Folder</span>
                     <span class="folder-count" id="unfiledCount">0</span>
                 </button>
+                </div>
 
                 <div id="dynamicFolderList"></div>
             </div>
@@ -241,10 +256,11 @@ window.BrowserNoteConfig = {
 <script src="<?= base_url('assets/vendor/tinymce/tinymce.min.js') ?>"></script>
 <script src="<?= base_url('assets/js/writing-preferences.js?v=2') ?>"></script>
 <script src="<?= base_url('assets/js/tooltips.js?v=1') ?>"></script>
-<script src="<?= base_url('assets/js/browsernote.js?v=writing2') ?>"></script>
+<script src="<?= base_url('assets/js/dialogs.js?v=1') ?>"></script>
+<script src="<?= base_url('assets/js/browsernote.js?v=writing3') ?>"></script>
 <script src="<?= base_url('assets/js/search.js') ?>"></script>
-<script src="<?= base_url('assets/js/shortcuts.js') ?>"></script>
-<script src="<?= base_url('assets/js/export.js') ?>"></script>
+<script src="<?= base_url('assets/js/shortcuts.js?v=2') ?>"></script>
+<script src="<?= base_url('assets/js/export.js?v=2') ?>"></script>
 <script src="<?= base_url('assets/js/polish.js?v=writing1') ?>"></script>
 <script src="<?= base_url('assets/js/editor-polish-fix.js?v=writing1') ?>"></script>
 </body>

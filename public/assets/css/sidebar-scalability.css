@@ -1,0 +1,95 @@
+.notes-section {
+    flex: 1 1 300px;
+    min-height: 180px;
+}
+
+.folders-section {
+    flex: 0 1 210px;
+    min-height: 68px;
+    max-height: min(25vh, 220px);
+    transition: max-height 140ms ease, min-height 140ms ease;
+}
+
+.folders-section .section-heading {
+    flex: 0 0 auto;
+    gap: 5px;
+}
+
+.folder-section-toggle {
+    min-width: 0;
+    flex: 1 1 auto;
+    min-height: 27px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 3px 6px;
+    border: 0;
+    border-radius: 5px;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    font-weight: inherit;
+    letter-spacing: inherit;
+    cursor: pointer;
+}
+
+.folder-section-toggle:hover {
+    background: var(--surface-hover);
+    color: var(--text);
+}
+
+.folder-toggle-icon {
+    font-size: 15px;
+    line-height: 1;
+    transition: transform 140ms ease;
+}
+
+.folder-list {
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.folder-pinned {
+    flex: 0 0 auto;
+}
+
+#dynamicFolderList {
+    min-height: 0;
+    flex: 1 1 auto;
+    overflow-y: auto;
+    scrollbar-width: thin;
+}
+
+.folders-section.is-collapsed {
+    flex-basis: 34px;
+    min-height: 34px;
+    max-height: 34px;
+}
+
+.folders-section.is-collapsed .folder-list {
+    display: none;
+}
+
+.folders-section.is-collapsed .folder-toggle-icon {
+    transform: rotate(-90deg);
+}
+
+@media (max-height: 760px) {
+    .notes-section {
+        min-height: 132px;
+    }
+
+    .folders-section {
+        max-height: 180px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .folders-section,
+    .folder-toggle-icon {
+        transition: none;
+    }
+}

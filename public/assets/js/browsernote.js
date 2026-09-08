@@ -4,6 +4,8 @@
     const config = window.BrowserNoteConfig || {};
     const apiBase = `${config.baseUrl}/api/notes`;
     const folderApiBase = `${config.baseUrl}/api/folders`;
+    const dialogs = window.BrowserNoteDialog;
+    const FOLDER_PANEL_KEY = 'browsernote.folder-panel';
 
     const AUTOSAVE_DELAY = 700;
     const LOCAL_DRAFT_DELAY = 180;
@@ -54,6 +56,8 @@
         noteCount: document.getElementById('noteCount'),
 
         foldersSection: document.getElementById('foldersSection'),
+        folderSectionToggle: document.getElementById('folderSectionToggle'),
+        folderToggleIcon: document.getElementById('folderToggleIcon'),
         allNotesFolder: document.getElementById('allNotesFolder'),
         allNotesCount: document.getElementById('allNotesCount'),
         unfiledFolder: document.getElementById('unfiledFolder'),
@@ -334,7 +338,7 @@
         );
     }
 
-    function shouldRecoverDraft(draft, note) {
+    async function shouldRecoverDraft(draft, note) {
         if (!draft || isTrashMode()) {
             return false;
         }
@@ -356,10 +360,12 @@
             return true;
         }
 
-        return window.confirm(
-            'Ditemukan draft lokal yang belum tersimpan, tetapi versi server juga sudah berubah. ' +
-            'Pilih OK untuk memulihkan draft lokal. Pilih Cancel untuk memakai versi server.'
-        );
+        return dialogs.confirm({
+            title: 'Konflik draft lokal',
+            message: 'Draft lokal belum tersimpan, tetapi versi di server juga sudah berubah. Pilih versi yang ingin digunakan.',
+            confirmText: 'Pulihkan draft',
+            cancelText: 'Gunakan versi server',
+        });
     }
 
     function applyRecoveredDraft(draft, note) {
@@ -765,7 +771,14 @@
     }
 
     async function createFolder() {
-        const name = window.prompt('Nama folder baru');
+        const name = await dialogs.prompt({
+            title: 'Buat folder baru',
+            message: 'Beri nama yang singkat agar mudah ditemukan di sidebar.',
+            inputLabel: 'Nama folder',
+            placeholder: 'Contoh: Ide tulisan',
+            confirmText: 'Buat folder',
+            maxLength: 100,
+        });
 
         if (name === null) {
             return;
@@ -784,6 +797,7 @@
         });
 
         await loadFolders();
+        setFolderSectionCollapsed(false);
 
         state.mode = 'active';
         state.folderFilter = String(response.data.id);
@@ -833,10 +847,14 @@
             return;
         }
 
-        const name = window.prompt(
-            'Nama folder',
-            folder.name
-        );
+        const name = await dialogs.prompt({
+            title: 'Ganti nama folder',
+            message: `Perbarui nama folder "${folder.name}".`,
+            inputLabel: 'Nama folder',
+            initialValue: folder.name,
+            confirmText: 'Simpan nama',
+            maxLength: 100,
+        });
 
         if (name === null) {
             return;
@@ -874,9 +892,13 @@
             return;
         }
 
-        const confirmed = window.confirm(
-            `Hapus folder "${folder.name}"?\n\nCatatan di dalam folder tidak akan dihapus. Catatan akan dipindahkan ke Tanpa Folder.`
-        );
+        const confirmed = await dialogs.confirm({
+            title: 'Hapus folder?',
+            message: `Folder "${folder.name}" akan dihapus. Catatan di dalamnya tetap aman dan dipindahkan ke Tanpa Folder.`,
+            confirmText: 'Hapus folder',
+            cancelText: 'Batal',
+            variant: 'danger',
+        });
 
         if (!confirmed) {
             return;
@@ -1037,7 +1059,7 @@
 
             if (
                 localDraft
-                && shouldRecoverDraft(localDraft, note)
+                && await shouldRecoverDraft(localDraft, note)
             ) {
                 applyRecoveredDraft(localDraft, note);
             } else {
@@ -1305,6 +1327,19 @@
             return;
         }
 
+        const title = state.currentNote?.title
+            || 'Catatan tanpa judul';
+        const confirmed = await dialogs.confirm({
+            title: 'Pindahkan ke Sampah?',
+            message: `"${title}" dapat dipulihkan kembali dari Sampah.`,
+            confirmText: 'Pindahkan',
+            cancelText: 'Batal',
+        });
+
+        if (!confirmed) {
+            return;
+        }
+
         await flushPendingSave();
 
         const id = Number(state.currentId);
@@ -1380,9 +1415,13 @@
         const title = state.currentNote?.title
             || 'Catatan tanpa judul';
 
-        const confirmed = window.confirm(
-            `Hapus permanen "${title}"?\n\nTindakan ini tidak dapat dibatalkan.`
-        );
+        const confirmed = await dialogs.confirm({
+            title: 'Hapus permanen?',
+            message: `"${title}" akan dihapus selamanya. Tindakan ini tidak dapat dibatalkan.`,
+            confirmText: 'Hapus permanen',
+            cancelText: 'Batal',
+            variant: 'danger',
+        });
 
         if (!confirmed) {
             return;
@@ -1657,6 +1696,25 @@
         fitEditorToHost();
     }
 
+    function setFolderSectionCollapsed(collapsed, persist = true) {
+        el.foldersSection.classList.toggle('is-collapsed', collapsed);
+        el.folderSectionToggle.setAttribute(
+            'aria-expanded',
+            String(!collapsed)
+        );
+        el.folderSectionToggle.dataset.tooltip = collapsed
+            ? 'Tampilkan daftar folder'
+            : 'Sembunyikan daftar folder';
+        el.folderToggleIcon.textContent = '⌄';
+
+        if (persist) {
+            localStorage.setItem(
+                FOLDER_PANEL_KEY,
+                collapsed ? 'collapsed' : 'open'
+            );
+        }
+    }
+
     function bindUI() {
         el.collapseSidebar.addEventListener('click', () => {
             el.appShell.classList.add('sidebar-collapsed');
@@ -1676,6 +1734,19 @@
         ) {
             el.appShell.classList.add('sidebar-collapsed');
         }
+
+        const storedFolderPanel = localStorage.getItem(FOLDER_PANEL_KEY);
+        setFolderSectionCollapsed(
+            storedFolderPanel === 'collapsed'
+            || (storedFolderPanel === null && window.innerHeight < 820),
+            false
+        );
+
+        el.folderSectionToggle.addEventListener('click', () => {
+            setFolderSectionCollapsed(
+                !el.foldersSection.classList.contains('is-collapsed')
+            );
+        });
 
         el.newNoteButton.addEventListener('click', () => {
             createNote().catch(handleError);

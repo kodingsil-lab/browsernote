@@ -130,10 +130,13 @@
             quickSave.textContent =
                 'Simpan Quick Note';
 
-            window.alert(
-                error?.message
-                || 'Quick Note gagal disimpan.'
-            );
+            await window.BrowserNoteDialog.alert({
+                title: 'Quick Note gagal disimpan',
+                message: error?.message
+                    || 'Silakan coba kembali.',
+                confirmText: 'Tutup',
+                variant: 'danger',
+            });
         }
     }
 

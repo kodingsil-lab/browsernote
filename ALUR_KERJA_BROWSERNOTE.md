@@ -651,3 +651,7 @@ Jika command Apache `htpasswd` tidak tersedia pada shared hosting, deploy memint
 Tooltip bantuan aplikasi tersedia untuk kontrol yang memerlukan penjelasan, termasuk sidebar, folder, aksi catatan, mode fokus, tampilan, dan simpan. Tooltip tampil melalui hover maupun fokus keyboard, diposisikan terhadap viewport agar tidak terpotong oleh sidebar, dan tombol dinamis tetap memiliki label aksesibilitas.
 
 Favicon BrowserNote tersedia dalam SVG, PNG 32 px, ICO, dan Apple Touch Icon 180 px. Halaman memasang ikon dengan URL berversi agar favicon bawaan hosting segera diganti setelah deploy.
+
+Panel folder kini dapat diciutkan dan pilihannya disimpan di browser. Pada layar pendek panel pertama kali ciut otomatis agar daftar catatan lebih luas; Semua Catatan dan Tanpa Folder tetap berada di atas sementara folder buatan memiliki scroll sendiri.
+
+Dialog aplikasi menggantikan confirm, prompt, dan alert bawaan untuk konflik draft, input folder, pemindahan ke Sampah, penghapusan folder/permanen, serta kegagalan Quick Note dan Export. Dialog mendukung keyboard, antrean Promise, tema tampilan, dan memfokuskan Batal untuk tindakan berbahaya. Konfirmasi beforeunload tetap native karena diwajibkan browser.
