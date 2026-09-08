@@ -649,3 +649,5 @@ Deploy mengenali konfigurasi bawaan cPanel di webroot. File `.user.ini`, `php.in
 Jika command Apache `htpasswd` tidak tersedia pada shared hosting, deploy meminta password dua kali secara tersembunyi dan membuat entri `.htpasswd` bcrypt yang kompatibel melalui PHP.
 
 Tooltip bantuan aplikasi tersedia untuk kontrol yang memerlukan penjelasan, termasuk sidebar, folder, aksi catatan, mode fokus, tampilan, dan simpan. Tooltip tampil melalui hover maupun fokus keyboard, diposisikan terhadap viewport agar tidak terpotong oleh sidebar, dan tombol dinamis tetap memiliki label aksesibilitas.
+
+Favicon BrowserNote tersedia dalam SVG, PNG 32 px, ICO, dan Apple Touch Icon 180 px. Halaman memasang ikon dengan URL berversi agar favicon bawaan hosting segera diganti setelah deploy.

@@ -4,6 +4,11 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="color-scheme" content="light">
+    <meta name="theme-color" content="#20242a">
+    <link rel="icon" type="image/svg+xml" href="<?= base_url('favicon.svg?v=1') ?>">
+    <link rel="icon" type="image/png" sizes="32x32" href="<?= base_url('favicon-32x32.png?v=1') ?>">
+    <link rel="shortcut icon" href="<?= base_url('favicon.ico?v=1') ?>">
+    <link rel="apple-touch-icon" sizes="180x180" href="<?= base_url('apple-touch-icon.png?v=1') ?>">
     <title>BrowserNote</title>
     <link rel="stylesheet" href="<?= base_url('assets/css/app.css') ?>">
 <link rel="stylesheet" href="<?= base_url('assets/css/ui-polish-fix.css') ?>">
