@@ -1,0 +1,5 @@
+* text=auto
+*.sh text eol=lf
+/deploy/*.php text eol=lf
+/deploy/*.htaccess text eol=lf
+/.env.hosting.example text eol=lf

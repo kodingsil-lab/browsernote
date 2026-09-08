@@ -1,0 +1,38 @@
+Options -Indexes
+RewriteEngine On
+
+# Password authentication covers the editor, API and backup downloads over TLS.
+# Plain HTTP redirects before requesting credentials; ACME HTTP challenges remain reachable.
+<If "%{HTTPS} == 'on'">
+    AuthType Basic
+    AuthName "BrowserNote"
+    AuthBasicProvider file
+    AuthUserFile "@@AUTH_FILE@@"
+    Require valid-user
+</If>
+<Else>
+    Require all granted
+</Else>
+
+<FilesMatch "^\.">
+    Require all denied
+</FilesMatch>
+RewriteRule ^\.well-known/acme-challenge/ - [L]
+RewriteCond %{HTTPS} !=on
+RewriteRule ^ https://note.sil.web.id%{REQUEST_URI} [R=301,L,NE]
+RewriteCond %{DOCUMENT_ROOT}/.browsernote-maintenance -f
+RewriteRule ^ - [R=503,L]
+ErrorDocument 503 "BrowserNote sedang diperbarui. Silakan coba beberapa saat lagi."
+RewriteRule ^(?:app|vendor|writable|deploy|tests|script|\.git)(?:/|$) - [F,L,NC]
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^([\s\S]*)$ index.php/$1 [L,NC,QSA]
+RewriteCond %{HTTP:Authorization} .
+RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+
+<IfModule mod_headers.c>
+    Header always set X-Content-Type-Options "nosniff"
+    Header always set X-Frame-Options "SAMEORIGIN"
+    Header always set Referrer-Policy "same-origin"
+    Header always set Permissions-Policy "camera=(), microphone=(), geolocation=()"
+</IfModule>

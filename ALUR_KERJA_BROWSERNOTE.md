@@ -624,3 +624,16 @@ Validasi: syntax check JavaScript/PHP, pemeriksaan browser pada desktop dan view
 ### Koreksi posisi awal tulisan
 
 Sesuai preferensi pengguna, bawaan dan reset kini memakai lebar penuh dengan tulisan dimulai 20 px dari sisi kiri editor. Pengaturan lama dimigrasikan satu kali ke lebar penuh (`layoutVersion: 2`), dengan tema, font, ukuran, dan jarak baris tetap dipertahankan. Mode terpusat tetap tersedia sebagai pilihan manual di Tampilan. Jarak atas untuk lebar penuh dikurangi menjadi 22 px.
+
+## Stage 16 — Script Deploy SSH untuk note.sil.web.id
+
+Referensi: script dan panduan deploy proyek lokal `plpi-public`. Implementasi BrowserNote menggunakan `deploy-cpanel.sh` dengan action `check`, `install`, dan `update`, serta paket source yang dapat dibuat lewat `script/BUILD_DEPLOY_PACKAGE.ps1`.
+
+- Aplikasi berada di luar webroot dengan release terpisah; hanya `public/` diterbitkan ke folder domain.
+- SQLite, .env, dan password situs berada di shared storage yang dipertahankan saat update.
+- Akses editor/API/backup melalui HTTPS dilindungi Apache Basic Auth sesuai pilihan pengguna. Password diisi langsung pada terminal hosting.
+- Setiap deploy membuat backup webroot, konfigurasi, dan snapshot SQLite. Migrasi berjalan dalam maintenance; kegagalan tidak otomatis membuka kembali situs.
+- Paket tidak berisi catatan/database lokal, .env lokal, atau vendor Composer. Dependensi dipasang dari composer.lock pada hosting.
+- Panduan lengkap, syarat hosting, dan pemulihan kegagalan ada di `DEPLOY_SSH.md`.
+
+Validasi lokal: syntax Bash/PHP dan konfigurasi Apache lulus; 15 pemeriksaan helper mencakup pemeliharaan .env, key unik, penolakan path salah, patch front controller, konfigurasi autentikasi/HTTPS, migrasi berulang, snapshot WAL, integritas backup, dan penolakan database tidak sesuai. Isi paket diperiksa agar tidak memuat data lokal. Koneksi SSH, DNS/SSL, PHP-FPM, dan deploy pada hosting belum dijalankan.
