@@ -51,7 +51,22 @@ try {
             put($release . '/public/index.php', str_replace($needle, 'require ' . var_export($release . '/app/Config/Paths.php', true) . ';', $index));
             $rules = file_get_contents(__DIR__ . '/public.htaccess');
             if ($rules === false || substr_count($rules, '@@AUTH_FILE@@') !== 1) stop('Template htaccess tidak valid.');
-            put($release . '/public/.htaccess', str_replace('@@AUTH_FILE@@', $auth, $rules));
+            $rules = str_replace('@@AUTH_FILE@@', $auth, $rules);
+            $existingHtaccess = $argv[4] ?? '';
+            if ($existingHtaccess !== '' && is_file($existingHtaccess)) {
+                $existingHtaccess = checkedPath($existingHtaccess);
+                $existingRules = file_get_contents($existingHtaccess);
+                if ($existingRules === false) stop('Tidak dapat membaca htaccess cPanel yang ada.');
+                preg_match_all(
+                    '~^#(?: php --)? BEGIN cPanel-generated[^\r\n]*\R.*?^#(?: php --)? END cPanel-generated[^\r\n]*(?:\R|$)~ms',
+                    $existingRules,
+                    $managedBlocks,
+                );
+                if ($managedBlocks[0] !== []) {
+                    $rules = rtrim($rules) . "\n\n" . implode("\n", array_map('trim', $managedBlocks[0])) . "\n";
+                }
+            }
+            put($release . '/public/.htaccess', $rules);
             break;
         case 'backup-db':
             $source = checkedPath($argv[2] ?? '');

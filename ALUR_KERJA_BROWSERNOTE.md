@@ -643,3 +643,5 @@ Wrapper `script/DEPLOY_VIA_SSH.ps1` dapat membangun paket, memvalidasi isinya, m
 Hosting yang tidak menyediakan `rsync` didukung melalui fallback tar/copy. Sebelum fallback membersihkan isi webroot, script tetap memvalidasi path dan marker kepemilikan deployment; `.well-known`, marker deployment, maintenance, dan front controller aktif dipertahankan sampai release baru siap.
 
 Jika Composer global tidak tersedia, action `check` memvalidasi tersedianya curl, wget, atau `allow_url_fopen`. Action `install` kemudian mengunduh installer Composer resmi, memverifikasi checksum SHA-384, dan memasang Composer 2 di private shared tools tanpa akses root.
+
+Deploy mengenali konfigurasi bawaan cPanel di webroot. File `.user.ini`, `php.ini`, folder `cgi-bin` dan `.well-known` dipertahankan; blok bertanda cPanel-generated dari `.htaccess` lama digabungkan ke htaccess BrowserNote agar pengaturan PHP domain tidak hilang.

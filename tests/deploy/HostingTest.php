@@ -46,11 +46,14 @@ try {
     $release = $testRoot . '/release';
     mkdir($release . '/public', 0755, true);
     copy($project . '/public/index.php', $release . '/public/index.php');
-    success('prepare-public', $hostPath($release), $hostPath($testRoot . '/.htpasswd'));
+    $cPanelHtaccess = $testRoot . '/cpanel.htaccess';
+    file_put_contents($cPanelHtaccess, "# BEGIN cPanel-generated php ini directives, do not edit\n<IfModule php8_module>\nphp_flag log_errors On\n</IfModule>\n# END cPanel-generated php ini directives, do not edit\n");
+    success('prepare-public', $hostPath($release), $hostPath($testRoot . '/.htpasswd'), $hostPath($cPanelHtaccess));
     $index = file_get_contents($release . '/public/index.php');
     $rules = file_get_contents($release . '/public/.htaccess');
     verify(str_contains($index, $hostPath($release) . '/app/Config/Paths.php'), 'Front controller points outside webroot to the release');
     verify(str_contains($rules, 'Require valid-user') && !str_contains($rules, 'Require local') && !str_contains($rules, '@@'), 'Hosting config enables password auth and resolves template placeholders');
+    verify(str_contains($rules, 'cPanel-generated php ini directives') && str_contains($rules, 'php_flag log_errors On'), 'Managed cPanel htaccess block is preserved');
     verify(str_contains($rules, 'https://note.sil.web.id') && str_contains($rules, '.browsernote-maintenance'), 'HTTPS and maintenance are configured');
     file_put_contents($release . '/public/index.php', '<?php // Unexpected front controller');
     [$exit] = helper('prepare-public', $hostPath($release), $hostPath($testRoot . '/.htpasswd'));

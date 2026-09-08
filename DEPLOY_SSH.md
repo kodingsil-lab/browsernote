@@ -88,7 +88,7 @@ bash deploy-cpanel.sh install
 
 Path PHP/Composer contoh tersebut harus benar-benar tersedia di hosting. `COMPOSER_BIN` harus berupa file entry point PHP Composer atau `composer.phar`, bukan command beserta argumennya. Jika Composer tidak tersedia, saat `install` script mengunduh installer resmi ke folder privat `shared/tools`, memverifikasi checksum SHA-384 dari layanan resmi Composer, lalu memasang Composer 2 lokal. Action `check` hanya memastikan metode unduhan tersedia dan tidak mengunduh file.
 
-Webroot pertama kali harus kosong, kecuali `.well-known`. Jika ada `index.html` bawaan hosting, pindahkan dahulu ke folder backup di luar webroot. Script menolak menimpa situs yang belum ditandai sebagai deployment BrowserNote.
+Webroot pertama kali boleh berisi konfigurasi bawaan cPanel: `.well-known`, `.htaccess`, `.user.ini`, `php.ini`, dan `cgi-bin`. Blok cPanel-generated di `.htaccess` digabungkan ke konfigurasi BrowserNote; file/folder bawaan lainnya dipertahankan. Jika ada `index.html` atau situs lama, pindahkan dahulu ke folder backup di luar webroot. Script menolak menimpa situs yang belum ditandai sebagai deployment BrowserNote.
 
 ## 3. Update berikutnya
 

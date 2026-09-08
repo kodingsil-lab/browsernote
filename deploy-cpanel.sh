@@ -103,7 +103,13 @@ elif [[ -f "$APP_DIR/.browsernote-installing" ]]; then
 else
     [[ "$ACTION" != update ]] || fail 'Belum terpasang. Gunakan install.'
     [[ ! -d "$APP_DIR" || -z "$(find "$APP_DIR" -mindepth 1 -maxdepth 1 -print -quit)" ]] || fail 'App dir tidak kosong dan belum dikenali sebagai BrowserNote.'
-    [[ ! -d "$WEB_DIR" || -z "$(find "$WEB_DIR" -mindepth 1 -maxdepth 1 ! -name '.well-known' -print -quit)" ]] || fail 'Webroot harus kosong (boleh .well-known). Pindahkan file bawaan hosting terlebih dahulu.'
+    [[ ! -d "$WEB_DIR" || -z "$(find "$WEB_DIR" -mindepth 1 -maxdepth 1 \
+        ! -name '.well-known' \
+        ! -name '.htaccess' \
+        ! -name '.user.ini' \
+        ! -name 'php.ini' \
+        ! -name 'cgi-bin' \
+        -print -quit)" ]] || fail 'Webroot berisi file selain konfigurasi bawaan cPanel. Pindahkan file tersebut terlebih dahulu.'
 fi
 if [[ ! -s "$APP_DIR/shared/.htpasswd" ]]; then
     HTPASSWD_BIN="$(command -v htpasswd || true)"
@@ -169,7 +175,7 @@ ln -s -- "$SHARED/.env" "$RELEASE/.env"
 ln -s -- "$SHARED/writable" "$RELEASE/writable"
 "$PHP_BIN" "$COMPOSER_BIN" install --working-dir="$RELEASE" --no-dev --prefer-dist --no-interaction --no-progress --optimize-autoloader --no-scripts --no-plugins
 "$PHP_BIN" "$COMPOSER_BIN" check-platform-reqs --working-dir="$RELEASE" --no-dev
-"$PHP_BIN" "$SOURCE_DIR/deploy/hosting.php" prepare-public "$RELEASE" "$SHARED/.htpasswd"
+"$PHP_BIN" "$SOURCE_DIR/deploy/hosting.php" prepare-public "$RELEASE" "$SHARED/.htpasswd" "$WEB_DIR/.htaccess"
 "$PHP_BIN" -l "$RELEASE/public/index.php"
 find "$RELEASE/app" "$RELEASE/public" "$RELEASE/vendor" "$RELEASE/deploy" -type d -exec chmod 755 {} +
 find "$RELEASE/app" "$RELEASE/public" "$RELEASE/vendor" "$RELEASE/deploy" -type f -exec chmod 644 {} +
@@ -190,6 +196,9 @@ log 'Menerbitkan hanya public/ ke webroot domain.'
 if command -v rsync >/dev/null 2>&1; then
     rsync -a --delete \
         --exclude='.well-known/' \
+        --exclude='.user.ini' \
+        --exclude='php.ini' \
+        --exclude='cgi-bin/' \
         --exclude='.browsernote-maintenance' \
         --exclude='.browsernote-deployed' \
         --exclude='index.php' \
@@ -200,6 +209,9 @@ else
     # both ownership markers were verified before this cleanup is allowed.
     find "$WEB_DIR" -mindepth 1 -maxdepth 1 \
         ! -name '.well-known' \
+        ! -name '.user.ini' \
+        ! -name 'php.ini' \
+        ! -name 'cgi-bin' \
         ! -name '.browsernote-maintenance' \
         ! -name '.browsernote-deployed' \
         ! -name 'index.php' \
