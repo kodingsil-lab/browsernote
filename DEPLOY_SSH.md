@@ -16,7 +16,7 @@ Script ini mengikuti pemisahan aplikasi dan webroot pada `plpi-public/deploy-cpa
 
 Di cPanel, buat domain/subdomain `note.sil.web.id`, aktifkan sertifikat SSL, dan arahkan document root ke folder webroot di atas. Gunakan folder khusus domain, bukan document root situs lain. Bila hosting menetapkan path berbeda, isi `WEB_DIR` dengan path sebenarnya pada setiap perintah. App, source, dan backup harus berada di luar webroot; app dan backup juga ditolak bila berada di `public_html`.
 
-PHP **8.2 atau lebih baru**, ekstensi **intl, mbstring, sqlite3, fileinfo, openssl**, serta Bash, tar, realpath, dan htpasswd harus tersedia. `rsync` dipakai bila tersedia; jika tidak, script otomatis memakai fallback tar/copy. Versi PHP di MultiPHP Manager harus sesuai dengan PHP CLI yang dipakai script. Script ditujukan untuk Apache 2.4 atau hosting yang mendukung directive `.htaccess` Apache termasuk Basic Auth dan `<If>`, dengan HTTPS langsung pada webserver. Konfigurasi reverse proxy/TLS termination perlu disesuaikan oleh hosting.
+PHP **8.2 atau lebih baru**, ekstensi **intl, mbstring, sqlite3, fileinfo, openssl**, serta Bash, tar, dan realpath harus tersedia. `rsync` dan `htpasswd` dipakai bila tersedia; jika tidak, script otomatis memakai fallback tar/copy dan hash bcrypt dari PHP. Versi PHP di MultiPHP Manager harus sesuai dengan PHP CLI yang dipakai script. Script ditujukan untuk Apache 2.4 atau hosting yang mendukung directive `.htaccess` Apache termasuk Basic Auth dan `<If>`, dengan HTTPS langsung pada webserver. Konfigurasi reverse proxy/TLS termination perlu disesuaikan oleh hosting.
 
 ## 1. Buat paket di Windows
 
@@ -75,7 +75,7 @@ bash deploy-cpanel.sh install
 
 `check` memeriksa command, ekstensi, source, lokasi folder, kepemilikan deployment, dan Composer tanpa mengubah file hosting. Pemeriksaan ini belum membuktikan konfigurasi PHP-FPM, SSL, atau document root domain.
 
-`install` meminta password untuk username **penulis** melalui prompt `htpasswd`. Password tidak ditampilkan, tidak dimasukkan ke argumen command, dan tidak disimpan dalam Git. Gunakan `AUTH_USER=namaanda bash deploy-cpanel.sh install` untuk username berbeda saat pertama kali memasang. Ini satu pintu password untuk kumpulan catatan bersama, bukan akun terpisah per penulis.
+`install` meminta password untuk username **penulis** melalui prompt tersembunyi. Jika command `htpasswd` tidak tersedia, script membuat hash bcrypt Apache melalui PHP. Password tidak ditampilkan, tidak dimasukkan ke argumen command, dan tidak disimpan dalam Git. Gunakan `AUTH_USER=namaanda bash deploy-cpanel.sh install` untuk username berbeda saat pertama kali memasang. Ini satu pintu password untuk kumpulan catatan bersama, bukan akun terpisah per penulis.
 
 Jika PHP default hosting terlalu lama:
 
@@ -110,7 +110,7 @@ Database berada di shared writable, bukan di folder release. Release lama dan ba
 
 ## Password dan pemeriksaan hasil
 
-Untuk mengganti password nanti, jalankan sendiri dari terminal hosting:
+Untuk mengganti password nanti ketika command `htpasswd` tersedia, jalankan:
 
 ```bash
 htpasswd -B "$HOME/browsernote-app/shared/.htpasswd" penulis

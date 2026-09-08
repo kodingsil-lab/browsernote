@@ -645,3 +645,5 @@ Hosting yang tidak menyediakan `rsync` didukung melalui fallback tar/copy. Sebel
 Jika Composer global tidak tersedia, action `check` memvalidasi tersedianya curl, wget, atau `allow_url_fopen`. Action `install` kemudian mengunduh installer Composer resmi, memverifikasi checksum SHA-384, dan memasang Composer 2 di private shared tools tanpa akses root.
 
 Deploy mengenali konfigurasi bawaan cPanel di webroot. File `.user.ini`, `php.ini`, folder `cgi-bin` dan `.well-known` dipertahankan; blok bertanda cPanel-generated dari `.htaccess` lama digabungkan ke htaccess BrowserNote agar pengaturan PHP domain tidak hilang.
+
+Jika command Apache `htpasswd` tidak tersedia pada shared hosting, deploy meminta password dua kali secara tersembunyi dan membuat entri `.htpasswd` bcrypt yang kompatibel melalui PHP.

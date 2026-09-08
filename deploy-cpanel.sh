@@ -14,6 +14,7 @@ APP_URL='https://note.sil.web.id/'
 LOCK_HELD=0
 MAINTENANCE=0
 COMPOSER_INSTALLER=''
+HTPASSWD_BIN=''
 STAMP="$(date +%Y%m%d-%H%M%S)-$$"
 
 log() { printf '\n[BrowserNote] %s\n' "$*"; }
@@ -113,8 +114,13 @@ else
 fi
 if [[ ! -s "$APP_DIR/shared/.htpasswd" ]]; then
     HTPASSWD_BIN="$(command -v htpasswd || true)"
-    [[ -n "$HTPASSWD_BIN" ]] || HTPASSWD_BIN='/usr/local/apache/bin/htpasswd'
-    [[ -x "$HTPASSWD_BIN" ]] || fail 'htpasswd tidak ditemukan. Minta hosting menyediakan Apache htpasswd.'
+    if [[ -z "$HTPASSWD_BIN" && -x '/usr/local/apache/bin/htpasswd' ]]; then
+        HTPASSWD_BIN='/usr/local/apache/bin/htpasswd'
+    fi
+    if [[ -z "$HTPASSWD_BIN" ]]; then
+        "$PHP_BIN" -r 'exit(defined("PASSWORD_BCRYPT") && is_string(password_hash("browsernote-preflight", PASSWORD_BCRYPT)) ? 0 : 1);' || fail 'PHP tidak dapat membuat hash bcrypt untuk password situs.'
+        log 'htpasswd tidak tersedia; password situs akan dibuat dengan bcrypt melalui PHP.'
+    fi
     [[ "$AUTH_USER" =~ ^[a-zA-Z0-9_.-]+$ ]] || fail 'AUTH_USER hanya boleh huruf, angka, _, -, titik.'
 fi
 log "Preflight OK. Domain=$APP_URL App=$APP_DIR Webroot=$WEB_DIR"
@@ -162,7 +168,21 @@ fi
 if [[ ! -s "$SHARED/.htpasswd" ]]; then
     [[ -t 0 ]] || fail 'Install pertama membutuhkan terminal interaktif (gunakan ssh -t) untuk password.'
     log "Buat password situs untuk pengguna $AUTH_USER (input tersembunyi)."
-    "$HTPASSWD_BIN" -cB "$SHARED/.htpasswd" "$AUTH_USER"
+    if [[ -n "$HTPASSWD_BIN" ]]; then
+        "$HTPASSWD_BIN" -cB "$SHARED/.htpasswd" "$AUTH_USER"
+    else
+        read -r -s -p 'Password baru: ' AUTH_PASSWORD
+        printf '\n'
+        read -r -s -p 'Ulangi password baru: ' AUTH_PASSWORD_CONFIRM
+        printf '\n'
+        [[ -n "$AUTH_PASSWORD" ]] || fail 'Password tidak boleh kosong.'
+        [[ "$AUTH_PASSWORD" == "$AUTH_PASSWORD_CONFIRM" ]] || fail 'Password tidak sama.'
+        PASSWORD_HASH="$(printf '%s' "$AUTH_PASSWORD" | "$PHP_BIN" -r '$password=stream_get_contents(STDIN); $hash=password_hash($password, PASSWORD_BCRYPT); if (!is_string($hash)) { exit(1); } echo $hash;')" || fail 'PHP gagal membuat hash password.'
+        unset AUTH_PASSWORD AUTH_PASSWORD_CONFIRM
+        [[ "$PASSWORD_HASH" == '$2y$'* ]] || fail 'Format hash bcrypt PHP tidak dikenali.'
+        printf '%s:%s\n' "$AUTH_USER" "$PASSWORD_HASH" > "$SHARED/.htpasswd"
+        unset PASSWORD_HASH
+    fi
 fi
 # Apache reads the password hashes; plaintext secrets and SQLite remain owner-only.
 chmod 644 "$SHARED/.htpasswd"
