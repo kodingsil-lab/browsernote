@@ -737,7 +737,9 @@
             more.type = 'button';
             more.className = 'folder-more';
             more.textContent = '⋯';
-            more.title = `Kelola ${folder.name}`;
+            more.setAttribute('aria-label', `Kelola folder ${folder.name}`);
+            more.dataset.tooltip = `Kelola folder ${folder.name}`;
+            more.dataset.tooltipSide = 'right';
 
             more.addEventListener('click', (event) => {
                 event.stopPropagation();

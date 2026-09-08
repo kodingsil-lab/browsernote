@@ -647,3 +647,5 @@ Jika Composer global tidak tersedia, action `check` memvalidasi tersedianya curl
 Deploy mengenali konfigurasi bawaan cPanel di webroot. File `.user.ini`, `php.ini`, folder `cgi-bin` dan `.well-known` dipertahankan; blok bertanda cPanel-generated dari `.htaccess` lama digabungkan ke htaccess BrowserNote agar pengaturan PHP domain tidak hilang.
 
 Jika command Apache `htpasswd` tidak tersedia pada shared hosting, deploy meminta password dua kali secara tersembunyi dan membuat entri `.htpasswd` bcrypt yang kompatibel melalui PHP.
+
+Tooltip bantuan aplikasi tersedia untuk kontrol yang memerlukan penjelasan, termasuk sidebar, folder, aksi catatan, mode fokus, tampilan, dan simpan. Tooltip tampil melalui hover maupun fokus keyboard, diposisikan terhadap viewport agar tidak terpotong oleh sidebar, dan tombol dinamis tetap memiliki label aksesibilitas.

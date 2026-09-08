@@ -9,6 +9,7 @@
 <link rel="stylesheet" href="<?= base_url('assets/css/ui-polish-fix.css') ?>">
 <link rel="stylesheet" href="<?= base_url('assets/css/ui-layout-scale-fix.css') ?>">
 <link rel="stylesheet" href="<?= base_url('assets/css/writing-preferences.css?v=5') ?>">
+<link rel="stylesheet" href="<?= base_url('assets/css/tooltips.css?v=1') ?>">
 </head>
 <body>
 <div class="app-shell" id="appShell">
@@ -27,11 +28,12 @@
                 id="collapseSidebar"
                 type="button"
                 aria-label="Ciutkan sidebar"
-                title="Ciutkan sidebar"
+                data-tooltip="Sembunyikan sidebar"
+                data-tooltip-side="right"
             >‹</button>
         </div>
 
-        <button class="new-note-button" id="newNoteButton" type="button">
+        <button class="new-note-button" id="newNoteButton" type="button" data-tooltip="Buat catatan baru (Ctrl+N)" data-tooltip-side="right">
             <span>＋</span>
             <span>Catatan Baru</span>
         </button>
@@ -50,8 +52,9 @@
                 class="search-clear"
                 id="searchClearButton"
                 type="button"
-                title="Bersihkan pencarian"
                 aria-label="Bersihkan pencarian"
+                data-tooltip="Bersihkan pencarian"
+                data-tooltip-side="left"
                 hidden
             >×</button>
         </label>
@@ -75,8 +78,9 @@
                     class="section-add-button"
                     id="addFolderButton"
                     type="button"
-                    title="Buat folder"
                     aria-label="Buat folder"
+                    data-tooltip="Buat folder baru"
+                    data-tooltip-side="left"
                 >＋</button>
             </div>
 
@@ -127,7 +131,8 @@
                 id="showSidebar"
                 type="button"
                 aria-label="Tampilkan sidebar"
-                title="Tampilkan sidebar"
+                data-tooltip="Tampilkan sidebar"
+                data-tooltip-side="right"
             >☰</button>
 
             <input
@@ -150,22 +155,22 @@
             </label>
 
             <div class="note-actions" id="noteActions">
-                <button class="note-action-button" id="archiveAction" type="button">Arsipkan</button>
-                <button class="note-action-button danger-soft" id="trashAction" type="button">Sampah</button>
-                <button class="note-action-button" id="restoreAction" type="button" hidden>Pulihkan</button>
-                <button class="note-action-button danger" id="forceDeleteAction" type="button" hidden>Hapus Permanen</button>
+                <button class="note-action-button" id="archiveAction" type="button" data-tooltip="Pindahkan catatan ke Arsip" data-tooltip-side="bottom">Arsipkan</button>
+                <button class="note-action-button danger-soft" id="trashAction" type="button" data-tooltip="Pindahkan catatan ke Sampah" data-tooltip-side="bottom">Sampah</button>
+                <button class="note-action-button" id="restoreAction" type="button" data-tooltip="Kembalikan catatan dari Arsip atau Sampah" data-tooltip-side="bottom" hidden>Pulihkan</button>
+                <button class="note-action-button danger" id="forceDeleteAction" type="button" data-tooltip="Hapus catatan secara permanen" data-tooltip-side="bottom" hidden>Hapus Permanen</button>
             </div>
 
             <div class="writing-tools" aria-label="Pengaturan menulis">
-                <button class="writing-button" id="focusModeButton" type="button" aria-pressed="false" title="Mode fokus">Fokus</button>
-                <button class="writing-button" id="appearanceButton" type="button" aria-haspopup="dialog" aria-controls="appearanceDialog">Tampilan</button>
+                <button class="writing-button" id="focusModeButton" type="button" aria-pressed="false" data-tooltip="Tulis tanpa gangguan; tekan Esc untuk keluar" data-tooltip-side="bottom">Fokus</button>
+                <button class="writing-button" id="appearanceButton" type="button" aria-haspopup="dialog" aria-controls="appearanceDialog" data-tooltip="Atur tema, lebar, huruf, dan jarak tulisan" data-tooltip-side="bottom">Tampilan</button>
             </div>
 
             <div class="save-state" id="saveState" data-state="ready">
                 Siap
             </div>
 
-            <button class="save-button" id="saveButton" type="button">
+            <button class="save-button" id="saveButton" type="button" data-tooltip="Simpan sekarang (Ctrl+S)" data-tooltip-side="bottom">
                 Simpan
             </button>
         </header>
@@ -230,7 +235,8 @@ window.BrowserNoteConfig = {
 
 <script src="<?= base_url('assets/vendor/tinymce/tinymce.min.js') ?>"></script>
 <script src="<?= base_url('assets/js/writing-preferences.js?v=2') ?>"></script>
-<script src="<?= base_url('assets/js/browsernote.js?v=writing1') ?>"></script>
+<script src="<?= base_url('assets/js/tooltips.js?v=1') ?>"></script>
+<script src="<?= base_url('assets/js/browsernote.js?v=writing2') ?>"></script>
 <script src="<?= base_url('assets/js/search.js') ?>"></script>
 <script src="<?= base_url('assets/js/shortcuts.js') ?>"></script>
 <script src="<?= base_url('assets/js/export.js') ?>"></script>
