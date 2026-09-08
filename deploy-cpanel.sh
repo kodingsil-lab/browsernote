@@ -33,7 +33,7 @@ case "$ACTION" in
     check|install|update) ;;
     *) fail 'Usage: bash deploy-cpanel.sh [check|install|update]' ;;
 esac
-for command in realpath rsync tar find cp mkdir ln mv chmod rmdir rm cat touch; do need "$command"; done
+for command in realpath tar find cp mkdir ln mv chmod rmdir rm cat touch; do need "$command"; done
 need "$PHP_BIN"
 "$PHP_BIN" "$SOURCE_DIR/deploy/hosting.php" preflight
 ACCOUNT_ROOT="$(realpath -e -- "$HOME")"
@@ -146,7 +146,25 @@ if [[ "$ACTION" == install ]]; then cp -- "$RELEASE/public/.htaccess" "$WEB_DIR/
 "$PHP_BIN" "$SOURCE_DIR/deploy/hosting.php" migrate "$RELEASE" "$SHARED/writable/browsernote.sqlite"
 
 log 'Menerbitkan hanya public/ ke webroot domain.'
-rsync -a --delete --exclude='.well-known/' --exclude='.browsernote-maintenance' --exclude='.browsernote-deployed' --exclude='index.php' "$RELEASE/public/" "$WEB_DIR/"
+if command -v rsync >/dev/null 2>&1; then
+    rsync -a --delete \
+        --exclude='.well-known/' \
+        --exclude='.browsernote-maintenance' \
+        --exclude='.browsernote-deployed' \
+        --exclude='index.php' \
+        "$RELEASE/public/" "$WEB_DIR/"
+else
+    log 'rsync tidak tersedia; memakai fallback tar/copy.'
+    # WEB_DIR has already been resolved inside the hosting account. On update,
+    # both ownership markers were verified before this cleanup is allowed.
+    find "$WEB_DIR" -mindepth 1 -maxdepth 1 \
+        ! -name '.well-known' \
+        ! -name '.browsernote-maintenance' \
+        ! -name '.browsernote-deployed' \
+        ! -name 'index.php' \
+        -exec rm -rf -- {} +
+    tar -C "$RELEASE/public" --exclude='./index.php' -cf - . | tar -C "$WEB_DIR" -xf -
+fi
 # Replace the front controller last so it points to the fully prepared release.
 cp -- "$RELEASE/public/index.php" "$WEB_DIR/.index-$STAMP.php"
 mv -f -- "$WEB_DIR/.index-$STAMP.php" "$WEB_DIR/index.php"

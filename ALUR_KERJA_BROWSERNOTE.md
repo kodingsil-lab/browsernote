@@ -639,3 +639,5 @@ Referensi: script dan panduan deploy proyek lokal `plpi-public`. Implementasi Br
 Validasi lokal: syntax Bash/PHP dan konfigurasi Apache lulus; 15 pemeriksaan helper mencakup pemeliharaan .env, key unik, penolakan path salah, patch front controller, konfigurasi autentikasi/HTTPS, migrasi berulang, snapshot WAL, integritas backup, dan penolakan database tidak sesuai. Isi paket diperiksa agar tidak memuat data lokal. Koneksi SSH, DNS/SSL, PHP-FPM, dan deploy pada hosting belum dijalankan.
 
 Wrapper `script/DEPLOY_VIA_SSH.ps1` dapat membangun paket, memvalidasi isinya, mengunggah lewat SCP, lalu menjalankan action `check`, `install`, atau `update` pada terminal SSH. Host, user, port, dan username Basic Auth diberikan sebagai parameter; password tetap diisi melalui prompt interaktif.
+
+Hosting yang tidak menyediakan `rsync` didukung melalui fallback tar/copy. Sebelum fallback membersihkan isi webroot, script tetap memvalidasi path dan marker kepemilikan deployment; `.well-known`, marker deployment, maintenance, dan front controller aktif dipertahankan sampai release baru siap.
