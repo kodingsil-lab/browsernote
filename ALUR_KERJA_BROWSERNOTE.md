@@ -620,3 +620,7 @@ Git lokal:
 - TinyMCE self-hosted masuk Git; dependensi Composer `/vendor/` diabaikan.
 
 Validasi: syntax check JavaScript/PHP, pemeriksaan browser pada desktop dan viewport 390 x 844, autosave dan reload catatan uji, persistensi preferensi, tema dan tipografi, lebar penuh, reset, serta keluar fokus melalui Escape.
+
+### Koreksi posisi awal tulisan
+
+Sesuai preferensi pengguna, bawaan dan reset kini memakai lebar penuh dengan tulisan dimulai 20 px dari sisi kiri editor. Pengaturan lama dimigrasikan satu kali ke lebar penuh (`layoutVersion: 2`), dengan tema, font, ukuran, dan jarak baris tetap dipertahankan. Mode terpusat tetap tersedia sebagai pilihan manual di Tampilan. Jarak atas untuk lebar penuh dikurangi menjadi 22 px.

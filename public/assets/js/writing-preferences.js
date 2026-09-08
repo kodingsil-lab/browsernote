@@ -1,8 +1,8 @@
-﻿(() => {
+(() => {
     'use strict';
 
     const storageKey = 'browsernote.appearance.v1';
-    const defaults = { theme: 'light', width: 'writing', font: 'sans', size: '18', spacing: '1.7' };
+    const defaults = { theme: 'light', width: 'wide', font: 'sans', size: '18', spacing: '1.7' };
     const allowed = {
         theme: ['light', 'sepia', 'dark'], width: ['writing', 'wide'],
         font: ['sans', 'serif'], size: ['16', '18', '20', '22'], spacing: ['1.5', '1.7', '2'],
@@ -12,6 +12,11 @@
         const saved = JSON.parse(localStorage.getItem(storageKey));
         for (const key of Object.keys(defaults)) {
             if (allowed[key].includes(saved?.[key])) preferences[key] = saved[key];
+        }
+        // Move the previous centered default to the left once; retain other preferences.
+        if (saved?.layoutVersion !== 2) {
+            preferences.width = 'wide';
+            localStorage.setItem(storageKey, JSON.stringify({ ...preferences, layoutVersion: 2 }));
         }
     } catch { /* Use defaults if storage is unavailable or invalid. */ }
 
@@ -37,7 +42,7 @@
             const link = doc.createElement('link');
             link.id = 'writing-content-style';
             link.rel = 'stylesheet';
-            link.href = `${window.BrowserNoteConfig.baseUrl}/assets/css/writing-content.css?v=1`;
+            link.href = `${window.BrowserNoteConfig.baseUrl}/assets/css/writing-content.css?v=2`;
             doc.head.appendChild(link);
         }
         // Preferences belong to the editor document, never to saved note HTML.
@@ -51,7 +56,7 @@
 
     function persist() {
         try {
-            localStorage.setItem(storageKey, JSON.stringify(preferences));
+            localStorage.setItem(storageKey, JSON.stringify({ ...preferences, layoutVersion: 2 }));
             feedback.textContent = 'Pilihan tersimpan di browser ini.';
         } catch {
             feedback.textContent = 'Pilihan diterapkan untuk sesi ini. Penyimpanan browser tidak tersedia.';

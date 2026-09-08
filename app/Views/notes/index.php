@@ -204,7 +204,7 @@
             <select id="appearance-theme"><option value="light">Terang</option><option value="sepia">Sepia</option><option value="dark">Gelap</option></select>
         </label>
         <label class="appearance-field" for="appearance-width">Lebar tulisan
-            <select id="appearance-width"><option value="writing">Mode Menulis — terpusat</option><option value="wide">Lebar penuh — kode dan tabel</option></select>
+            <select id="appearance-width"><option value="wide">Lebar penuh — mulai dari kiri</option><option value="writing">Mode Menulis — terpusat</option></select>
         </label>
         <label class="appearance-field" for="appearance-font">Jenis huruf
             <select id="appearance-font"><option value="sans">Sans-serif — Segoe UI</option><option value="serif">Serif — Georgia</option></select>
@@ -229,7 +229,7 @@ window.BrowserNoteConfig = {
 </script>
 
 <script src="<?= base_url('assets/vendor/tinymce/tinymce.min.js') ?>"></script>
-<script src="<?= base_url('assets/js/writing-preferences.js?v=1') ?>"></script>
+<script src="<?= base_url('assets/js/writing-preferences.js?v=2') ?>"></script>
 <script src="<?= base_url('assets/js/browsernote.js?v=writing1') ?>"></script>
 <script src="<?= base_url('assets/js/search.js') ?>"></script>
 <script src="<?= base_url('assets/js/shortcuts.js') ?>"></script>

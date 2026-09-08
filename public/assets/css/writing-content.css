@@ -1,4 +1,4 @@
-﻿/* Editor-only presentation: no attributes or inline styles are saved on note content. */
+/* Editor-only presentation: no attributes or inline styles are saved on note content. */
 html[data-writing-theme] { background: #fff; color-scheme: light; --paper: #fff; --ink: #24282e; --muted: #59616b; --rule: #dfe3e8; --code: #f2f4f7; --link: #2457a6; }
 html[data-writing-theme="sepia"] { --paper: #fbf5e9; --ink: #42382c; --muted: #72624e; --rule: #ded2bc; --code: #f0e6d4; --link: #79511e; }
 html[data-writing-theme="dark"] { color-scheme: dark; --paper: #1e2228; --ink: #e4e7ec; --muted: #b0bac7; --rule: #424a56; --code: #292f38; --link: #94beff; }
@@ -10,7 +10,7 @@ html[data-writing-theme] body.mce-content-body {
     line-height: var(--writing-spacing) !important; background: var(--paper) !important; color: var(--ink) !important;
     overflow-wrap: break-word;
 }
-html[data-writing-width="wide"] body.mce-content-body { max-width: none; }
+html[data-writing-width="wide"] body.mce-content-body { max-width: none; margin: 0 !important; padding: 22px 20px 72px !important; }
 html[data-writing-theme] body.mce-content-body p { font-size: inherit; }
 html[data-writing-theme] body.mce-content-body h1 { font-size: 1.85em !important; }
 html[data-writing-theme] body.mce-content-body h2 { font-size: 1.5em !important; }
