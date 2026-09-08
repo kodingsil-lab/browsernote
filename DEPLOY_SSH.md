@@ -39,6 +39,29 @@ ssh -t -p PORT_SSH USER_CPANEL@HOST_SSH
 
 Verifikasi fingerprint SSH sesuai informasi hosting saat koneksi pertama. Script tidak mengatur atau menonaktifkan pemeriksaan host key.
 
+Cara paling singkat adalah memakai wrapper PowerShell. Wrapper membuat paket baru, memeriksa agar `.env`, SQLite, `writable`, dan `vendor` tidak ikut, mengunggahnya, mengekstrak ke source baru, kemudian menjalankan action melalui SSH:
+
+```powershell
+.\script\DEPLOY_VIA_SSH.ps1 `
+    -SshHost HOST_SSH `
+    -SshUser USER_CPANEL `
+    -SshPort PORT_SSH `
+    -Action check
+```
+
+Setelah `check` lulus, lakukan pemasangan pertama. Terminal akan meminta autentikasi SSH dan kemudian password baru untuk BrowserNote:
+
+```powershell
+.\script\DEPLOY_VIA_SSH.ps1 `
+    -SshHost HOST_SSH `
+    -SshUser USER_CPANEL `
+    -SshPort PORT_SSH `
+    -Action install `
+    -AuthUser penulis
+```
+
+Untuk update berikutnya, ganti action menjadi `update`. Jika memakai private key tertentu, tambahkan `-IdentityFile C:\path\key`. Wrapper mempertahankan pemeriksaan host key bawaan OpenSSH.
+
 Di terminal SSH:
 
 ```bash
