@@ -15,7 +15,7 @@
 <link rel="stylesheet" href="<?= base_url('assets/css/ui-layout-scale-fix.css') ?>">
 <link rel="stylesheet" href="<?= base_url('assets/css/writing-preferences.css?v=5') ?>">
 <link rel="stylesheet" href="<?= base_url('assets/css/tooltips.css?v=1') ?>">
-<link rel="stylesheet" href="<?= base_url('assets/css/sidebar-scalability.css?v=1') ?>">
+<link rel="stylesheet" href="<?= base_url('assets/css/sidebar-scalability.css?v=2') ?>">
 <link rel="stylesheet" href="<?= base_url('assets/css/dialogs.css?v=1') ?>">
 </head>
 <body>

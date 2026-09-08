@@ -655,3 +655,5 @@ Favicon BrowserNote tersedia dalam SVG, PNG 32 px, ICO, dan Apple Touch Icon 180
 Panel folder kini dapat diciutkan dan pilihannya disimpan di browser. Pada layar pendek panel pertama kali ciut otomatis agar daftar catatan lebih luas; Semua Catatan dan Tanpa Folder tetap berada di atas sementara folder buatan memiliki scroll sendiri.
 
 Dialog aplikasi menggantikan confirm, prompt, dan alert bawaan untuk konflik draft, input folder, pemindahan ke Sampah, penghapusan folder/permanen, serta kegagalan Quick Note dan Export. Dialog mendukung keyboard, antrean Promise, tema tampilan, dan memfokuskan Batal untuk tindakan berbahaya. Konfirmasi beforeunload tetap native karena diwajibkan browser.
+
+Panel folder terbuka memiliki tinggi minimum yang cukup untuk Semua Catatan, Tanpa Folder, dan dua folder buatan. Ini mencegah flex layout menyusutkan panel menjadi satu baris; folder tambahan tetap tersedia melalui scroll internal.
