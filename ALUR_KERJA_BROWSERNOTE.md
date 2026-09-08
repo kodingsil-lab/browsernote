@@ -1,0 +1,600 @@
+# BrowserNote — Alur Kerja Pengembangan
+
+## 1. Tujuan
+
+BrowserNote adalah aplikasi notepad berbasis web yang sangat ringan untuk mencatat potongan kode, konfigurasi, perintah terminal, teks, tabel, tautan, dan catatan kerja lain langsung dari browser.
+
+Prinsip utama aplikasi:
+
+- tanpa login
+- tanpa register
+- langsung membuka ruang editor
+- autosave
+- full browser
+- antarmuka minimal
+- folder untuk pengelompokan catatan
+- arsip untuk catatan yang tidak aktif
+- sampah untuk penghapusan aman
+- pencarian judul dan isi
+- rich text editor lengkap
+- tabel lengkap
+- code block
+- berjalan lokal melalui XAMPP
+- tidak bergantung CDN untuk editor
+
+## 2. Stack
+
+Backend
+
+- PHP
+- CodeIgniter 4
+- SQLite
+
+Frontend
+
+- HTML
+- CSS native
+- JavaScript native
+- TinyMCE self-hosted
+
+Server lokal
+
+- XAMPP Apache
+
+Lokasi proyek
+
+```text
+C:\xampp\htdocs\browsernote
+```
+
+Base URL
+
+```text
+http://localhost/browsernote/public/
+```
+
+Database
+
+```text
+C:\xampp\htdocs\browsernote\writable\browsernote.sqlite
+```
+
+## 3. Filosofi UI
+
+Aplikasi bukan dashboard administratif.
+
+Alur utama:
+
+```text
+Buka browser
+    ↓
+BrowserNote terbuka
+    ↓
+Catatan terakhir atau catatan baru langsung tersedia
+    ↓
+Ketik
+    ↓
+Autosave
+    ↓
+Kelompokkan ke folder jika diperlukan
+    ↓
+Arsipkan jika selesai
+```
+
+Tampilan desktop:
+
+```text
+┌───────────────────────────────────────────────────────────────────────┐
+│ BrowserNote   + Baru   Cari                         Arsip   Pengaturan │
+├──────────────────┬────────────────────────────────────────────────────┤
+│ SIDEBAR          │ Judul catatan                                      │
+│                  ├────────────────────────────────────────────────────┤
+│ Terbaru          │ Toolbar editor                                     │
+│                  ├────────────────────────────────────────────────────┤
+│ Folder           │                                                    │
+│  OJS             │               EDITOR FULL HEIGHT                   │
+│  Flutter         │                                                    │
+│  VPS             │                                                    │
+│                  │                                                    │
+│ Arsip            │                                                    │
+│ Sampah           │                                                    │
+├──────────────────┴────────────────────────────────────────────────────┤
+│ Tersimpan otomatis                                      jumlah karakter│
+└───────────────────────────────────────────────────────────────────────┘
+```
+
+Sidebar dapat diciutkan. Saat sidebar ditutup editor menggunakan hampir seluruh lebar browser.
+
+## 4. Struktur Data
+
+### folders
+
+```text
+id
+name
+sort_order
+created_at
+updated_at
+```
+
+### notes
+
+```text
+id
+folder_id
+title
+content
+content_text
+is_archived
+is_deleted
+created_at
+updated_at
+archived_at
+deleted_at
+```
+
+Keterangan penting:
+
+- `content` menyimpan HTML TinyMCE.
+- `content_text` menyimpan versi plain text untuk pencarian cepat.
+- `folder_id` boleh kosong.
+- `is_archived` menentukan status arsip.
+- `is_deleted` menentukan status sampah.
+
+## 5. Endpoint Aplikasi
+
+Rencana endpoint utama:
+
+```text
+GET    /                         membuka aplikasi
+GET    /api/notes               daftar catatan
+POST   /api/notes               membuat catatan
+GET    /api/notes/{id}          membaca catatan
+PATCH  /api/notes/{id}          autosave dan perubahan catatan
+DELETE /api/notes/{id}          memindahkan ke sampah
+
+POST   /api/notes/{id}/archive
+POST   /api/notes/{id}/restore
+POST   /api/notes/{id}/restore-trash
+DELETE /api/notes/{id}/force
+
+GET    /api/folders
+POST   /api/folders
+PATCH  /api/folders/{id}
+DELETE /api/folders/{id}
+
+GET    /api/search?q=...
+```
+
+## 6. Tahapan Pengerjaan
+
+### Stage 00 — Preflight
+
+Tujuan:
+
+- memastikan XAMPP tersedia
+- memastikan PHP tersedia
+- memastikan Composer tersedia
+- memastikan ekstensi SQLite aktif
+- memastikan folder `htdocs` tersedia
+
+Kriteria PASS:
+
+```text
+PHP OK
+Composer OK
+SQLite3 OK
+htdocs OK
+```
+
+### Stage 01 — Foundation
+
+Tujuan:
+
+- membuat proyek CodeIgniter 4
+- mengatur base URL
+- mengatur SQLite
+- membuat shell full-browser
+- membuat sidebar dasar
+- membuat area editor placeholder
+- membuat CSS dasar
+- memastikan route root berjalan
+
+Output utama:
+
+```text
+C:\xampp\htdocs\browsernote
+```
+
+Kriteria PASS:
+
+```text
+http://localhost/browsernote/public/
+```
+
+dapat dibuka dan menampilkan shell BrowserNote.
+
+### Stage 02 — Database dan Model
+
+Tujuan:
+
+- migration `folders`
+- migration `notes`
+- model FolderModel
+- model NoteModel
+- seed catatan awal opsional
+- index pencarian
+- foreign key
+
+Kriteria PASS:
+
+- migration sukses
+- SQLite terbentuk
+- create/read/update/delete dasar berhasil
+
+### Stage 03 — API Catatan
+
+Tujuan:
+
+- endpoint daftar catatan
+- endpoint catatan tunggal
+- membuat catatan
+- memperbarui catatan
+- soft delete ke Sampah
+- restore
+- force delete
+- response JSON konsisten
+
+Kriteria PASS:
+
+- catatan dapat dibuat melalui API
+- catatan dapat dimuat kembali
+- perubahan tersimpan ke SQLite
+
+### Stage 04 — TinyMCE Self-Hosted
+
+Tujuan:
+
+- memasang TinyMCE secara lokal
+- tidak memakai CDN
+- editor mengisi tinggi browser
+- toolbar ringkas tetapi lengkap
+- tabel
+- heading
+- bold
+- italic
+- underline
+- strikethrough
+- list
+- checklist jika tersedia
+- link
+- blockquote
+- code
+- code block
+- search replace
+- fullscreen
+- undo redo
+- clear formatting
+
+Tabel harus mendukung:
+
+- insert table
+- tambah baris
+- tambah kolom
+- hapus baris
+- hapus kolom
+- merge cells
+- split cells
+- header row
+- delete table
+
+Kriteria PASS:
+
+- tabel dapat dibuat dan diedit
+- isi editor dapat dikirim ke backend
+- editor tetap cepat
+
+### Stage 05 — Autosave
+
+Tujuan:
+
+- autosave debounce sekitar 700 ms
+- indikator `Menyimpan...`
+- indikator `Tersimpan`
+- indikator gagal
+- tidak membuat request setiap karakter
+- mencegah race condition
+- penyimpanan terakhir menang
+
+Kriteria PASS:
+
+- mengetik lalu berhenti otomatis menyimpan
+- refresh browser memuat isi terakhir
+
+### Stage 06 — Local Recovery
+
+Tujuan:
+
+- draft sementara disimpan di browser
+- LocalStorage atau IndexedDB sebagai safety cache
+- jika request backend gagal, draft lokal tidak hilang
+- setelah backend pulih, pengguna dapat melanjutkan
+
+Kriteria PASS:
+
+- refresh tidak menghilangkan perubahan penting
+- kegagalan server tidak langsung menghilangkan draft
+
+### Stage 07 — Folder
+
+Tujuan:
+
+- buat folder
+- rename folder
+- hapus folder
+- pindahkan catatan ke folder
+- catatan tanpa folder tetap diperbolehkan
+- jumlah catatan per folder
+
+Contoh:
+
+```text
+Flutter
+OJS
+CodeIgniter
+Server VPS
+PowerShell
+```
+
+Kriteria PASS:
+
+- catatan dapat berpindah folder tanpa kehilangan isi
+
+### Stage 08 — Arsip dan Sampah
+
+Arsip:
+
+- catatan selesai dapat diarsipkan
+- catatan arsip tidak mengganggu daftar aktif
+- arsip dapat dipulihkan
+
+Sampah:
+
+- delete tidak langsung menghapus permanen
+- restore dari sampah
+- hapus permanen dilakukan eksplisit
+
+Kriteria PASS:
+
+- archive/restore berjalan
+- trash/restore berjalan
+- force delete berjalan
+
+### Stage 09 — Pencarian
+
+Tujuan:
+
+- pencarian judul
+- pencarian isi
+- pencarian real time
+- hasil diurutkan berdasarkan relevansi sederhana dan waktu perubahan
+- klik hasil membuka catatan
+
+Kriteria PASS:
+
+- potongan kode atau istilah di dalam isi dapat ditemukan
+
+Contoh pencarian:
+
+```text
+citationsRaw
+flutter build
+SMTP 587
+migration
+```
+
+### Stage 10 — Quick Note dan Keyboard Shortcut
+
+Shortcut:
+
+```text
+Ctrl + N     catatan baru
+Ctrl + S     simpan sekarang
+Ctrl + F     pencarian
+Ctrl + Shift + A  arsipkan
+Esc          tutup dialog
+```
+
+Perilaku Quick Note:
+
+- tidak wajib menentukan folder
+- tidak wajib menentukan judul
+- judul sementara `Catatan tanpa judul`
+- judul dapat diganti kapan saja
+
+Kriteria PASS:
+
+- membuat catatan baru tidak membutuhkan modal panjang
+
+### Stage 11 — Export dan Backup
+
+Export per catatan:
+
+```text
+.txt
+.html
+```
+
+Opsional setelah fungsi inti stabil:
+
+```text
+.md
+```
+
+Backup keseluruhan:
+
+- database SQLite
+- ekspor JSON
+- restore JSON
+
+Kriteria PASS:
+
+- seluruh data dapat dicadangkan
+- catatan individual dapat diekspor
+
+### Stage 12 — UI Polish
+
+Fokus:
+
+- full width
+- full height
+- sidebar 230–260 px
+- sidebar collapse
+- editor tanpa card berlebihan
+- tanpa Bootstrap
+- tanpa animasi berat
+- toolbar satu baris bila ruang cukup
+- responsive desktop/laptop
+- dark mode
+- light mode
+- status autosave kecil
+- scroll yang benar
+- fokus editor tidak terganggu
+
+Kriteria PASS:
+
+- area utama terasa seperti editor, bukan dashboard
+- tidak ada ruang kosong besar
+- layout tetap rapi pada 1366×768 dan 1920×1080
+
+### Stage 13 — Performance dan Hardening Lokal
+
+Tujuan:
+
+- query minimal
+- pagination atau lazy loading jika catatan banyak
+- debounce search
+- escape output yang bukan HTML editor
+- validasi request
+- CSRF untuk request perubahan
+- ukuran payload wajar
+- sanitasi HTML editor
+- backup database
+
+Catatan:
+
+Karena aplikasi tidak memakai autentikasi, deployment awal ditujukan untuk localhost. Jangan mengekspos aplikasi ini ke internet publik tanpa lapisan proteksi tambahan.
+
+### Stage 14 — Final UAT
+
+Skenario uji:
+
+1. buka aplikasi
+2. buat catatan
+3. tulis teks
+4. paste kode
+5. buat tabel
+6. autosave
+7. refresh
+8. buka kembali
+9. buat folder
+10. pindahkan catatan
+11. cari isi catatan
+12. arsipkan
+13. restore
+14. hapus
+15. restore dari sampah
+16. hapus permanen
+17. export
+18. backup
+19. uji sidebar collapse
+20. uji resolusi 1366×768 dan 1920×1080
+
+Kriteria final:
+
+```text
+Semua fungsi inti PASS
+Tidak ada kehilangan data
+Tidak ada login/register
+Buka URL langsung ke editor
+Autosave stabil
+Editor full-browser
+Tabel berfungsi lengkap
+Pencarian cepat
+```
+
+## 7. Urutan Script PowerShell
+
+Rencana file:
+
+```text
+01_BROWSERNOTE_FOUNDATION.ps1
+02_BROWSERNOTE_DATABASE.ps1
+03_BROWSERNOTE_NOTES_API.ps1
+04_BROWSERNOTE_TINYMCE.ps1
+05_BROWSERNOTE_AUTOSAVE.ps1
+06_BROWSERNOTE_LOCAL_RECOVERY.ps1
+07_BROWSERNOTE_FOLDERS.ps1
+08_BROWSERNOTE_ARCHIVE_TRASH.ps1
+09_BROWSERNOTE_SEARCH.ps1
+10_BROWSERNOTE_SHORTCUTS.ps1
+11_BROWSERNOTE_EXPORT_BACKUP.ps1
+12_BROWSERNOTE_UI_POLISH.ps1
+13_BROWSERNOTE_HARDENING.ps1
+14_BROWSERNOTE_FINAL_UAT.ps1
+```
+
+Setiap stage harus:
+
+- memiliki precheck
+- membuat backup file yang akan ditimpa bila perlu
+- menghentikan proses jika precheck kritis gagal
+- menjalankan verifikasi
+- menampilkan PASS atau FAIL
+- tidak melanjutkan diam-diam jika hasil utama gagal
+
+## 8. Struktur Folder Target
+
+```text
+browsernote/
+├── app/
+│   ├── Config/
+│   ├── Controllers/
+│   ├── Database/
+│   │   ├── Migrations/
+│   │   └── Seeds/
+│   ├── Models/
+│   └── Views/
+│       └── notes/
+├── public/
+│   ├── assets/
+│   │   ├── css/
+│   │   ├── js/
+│   │   └── vendor/
+│   │       └── tinymce/
+│   └── index.php
+├── writable/
+│   └── browsernote.sqlite
+├── vendor/
+├── .env
+├── composer.json
+└── spark
+```
+
+## 9. Keputusan Arsitektur yang Dikunci
+
+- Framework memakai CodeIgniter 4.
+- Database awal memakai SQLite.
+- Base URL memakai `http://localhost/browsernote/public/`.
+- Proyek berada di `C:\xampp\htdocs\browsernote`.
+- Editor memakai TinyMCE self-hosted.
+- Tidak memakai Bootstrap.
+- Tidak memakai login.
+- Tidak memakai register.
+- Tidak memakai dashboard statistik.
+- Tidak memakai CDN untuk komponen editor utama.
+- Autosave adalah mekanisme penyimpanan utama.
+- Folder adalah pengelompokan catatan.
+- Arsip adalah status catatan selesai/tidak aktif.
+- Sampah adalah penghapusan sementara.
+- UI memanfaatkan seluruh area browser.

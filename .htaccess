@@ -1,0 +1,17 @@
+# <BROWSERNOTE_STAGE13_ROOT_HARDENING>
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # Block framework source, database, backups, scripts and dependencies.
+    RewriteRule ^(?:app|system|writable|tests|vendor|script)(?:/|$) - [F,L,NC]
+
+    # Block environment and project metadata.
+    RewriteRule ^(?:\.env|composer\.(?:json|lock)|phpunit\.xml(?:\.dist)?|spark)$ - [F,L,NC]
+</IfModule>
+
+<FilesMatch "^\.">
+    Require all denied
+</FilesMatch>
+
+# </BROWSERNOTE_STAGE13_ROOT_HARDENING>

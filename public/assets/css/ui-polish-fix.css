@@ -1,0 +1,215 @@
+/* ============================================================
+   BrowserNote Stage 12A
+   Layout repair only.
+   Base colors are intentionally NOT changed.
+   ============================================================ */
+
+/* Main interface density */
+.app-shell {
+    grid-template-columns: 248px minmax(0, 1fr) !important;
+}
+
+.sidebar {
+    padding: 10px !important;
+}
+
+.topbar {
+    min-height: 52px !important;
+    padding: 7px 12px !important;
+    gap: 7px !important;
+}
+
+.note-title {
+    font-family: "Segoe UI", Arial, sans-serif !important;
+    font-size: 15px !important;
+    font-weight: 600 !important;
+    line-height: 1.25 !important;
+}
+
+.note-item-title {
+    font-size: 12px !important;
+    font-weight: 600 !important;
+}
+
+.note-item-meta,
+.statusbar,
+.save-state {
+    font-size: 9.5px !important;
+}
+
+.folder-item,
+.nav-item {
+    font-size: 11px !important;
+}
+
+.new-note-button {
+    font-size: 12px !important;
+}
+
+/* ============================================================
+   CRITICAL TINYMCE LAYOUT REPAIR
+   Force normal editor stack
+   header on top
+   editing canvas below
+   ============================================================ */
+
+.tox.tox-tinymce {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
+    width: 100% !important;
+    min-width: 0 !important;
+}
+
+.tox.tox-tinymce > .tox-editor-container {
+    display: flex !important;
+    flex: 1 1 auto !important;
+    flex-direction: column !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    min-height: 0 !important;
+}
+
+.tox .tox-editor-header {
+    position: relative !important;
+    inset: auto !important;
+    top: auto !important;
+    right: auto !important;
+    bottom: auto !important;
+    left: auto !important;
+
+    flex: 0 0 auto !important;
+    width: 100% !important;
+    max-width: none !important;
+    min-width: 0 !important;
+
+    display: block !important;
+    float: none !important;
+
+    transform: none !important;
+}
+
+.tox .tox-menubar {
+    width: 100% !important;
+    min-height: 31px !important;
+    padding: 2px 8px !important;
+
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: wrap !important;
+    align-items: center !important;
+}
+
+.tox .tox-toolbar-overlord {
+    width: 100% !important;
+    min-width: 0 !important;
+    display: block !important;
+}
+
+.tox .tox-toolbar,
+.tox .tox-toolbar__primary,
+.tox .tox-toolbar__overflow {
+    width: 100% !important;
+    min-width: 0 !important;
+
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: wrap !important;
+    align-items: center !important;
+    align-content: flex-start !important;
+
+    overflow: visible !important;
+}
+
+.tox .tox-toolbar__group {
+    display: flex !important;
+    flex: 0 0 auto !important;
+    flex-direction: row !important;
+    align-items: center !important;
+
+    width: auto !important;
+    min-width: 0 !important;
+
+    padding: 2px 3px !important;
+}
+
+.tox .tox-sidebar-wrap {
+    display: flex !important;
+    flex: 1 1 auto !important;
+    flex-direction: row !important;
+
+    width: 100% !important;
+    min-width: 0 !important;
+    min-height: 0 !important;
+}
+
+.tox .tox-edit-area {
+    flex: 1 1 auto !important;
+
+    width: 100% !important;
+    min-width: 0 !important;
+    min-height: 0 !important;
+}
+
+.tox .tox-edit-area__iframe {
+    width: 100% !important;
+    min-width: 0 !important;
+    height: 100% !important;
+}
+
+/* ============================================================
+   TOOLBAR DENSITY
+   ============================================================ */
+
+.tox .tox-mbtn {
+    height: 29px !important;
+    padding: 0 7px !important;
+
+    font-family: "Segoe UI", Arial, sans-serif !important;
+    font-size: 11.5px !important;
+}
+
+.tox .tox-tbtn {
+    width: 29px !important;
+    height: 29px !important;
+    margin: 1px !important;
+}
+
+.tox .tox-tbtn--select {
+    width: auto !important;
+    min-width: 82px !important;
+    max-width: 125px !important;
+    padding: 0 7px !important;
+}
+
+.tox .tox-tbtn__select-label {
+    max-width: 95px !important;
+    overflow: hidden !important;
+    font-size: 10.5px !important;
+    text-overflow: ellipsis !important;
+    white-space: nowrap !important;
+}
+
+/* Never show cloud promotion */
+.tox .tox-promotion,
+.tox .tox-statusbar__branding {
+    display: none !important;
+}
+
+/* Keep toolbar above canvas, never on the right */
+.tox .tox-editor-container {
+    grid-template-columns: minmax(0, 1fr) !important;
+    grid-template-rows: auto minmax(0, 1fr) auto !important;
+}
+
+/* Comfortable width on smaller screens */
+@media (max-width: 1100px) {
+    .app-shell {
+        grid-template-columns: 235px minmax(0, 1fr) !important;
+    }
+
+    .tox .tox-tbtn--select {
+        min-width: 74px !important;
+        max-width: 108px !important;
+    }
+}
